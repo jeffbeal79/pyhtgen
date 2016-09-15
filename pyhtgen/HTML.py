@@ -95,6 +95,58 @@ TABLE_STYLE_THINBORDER = "border: 1px solid #000000; border-collapse: collapse;"
 
 
 #=== CLASSES ===================================================================
+class BasicElement(object):
+    """
+    a BasicElement is used to hold undefined html tags.  May also be used as a
+    base class for other html tag classes in the future.
+    
+    Attributes:
+    -tagdef: Text that is used to create the undefined tag.
+    -subelements: list, any additional elements that may live inside of the
+            basic element
+    -attribs: dict, additional attributes for the HTML tag
+    -text: Text that goes inside the tag
+    -needclose: bool, flag to determine if a close tag also needs generated.
+    """
+    
+    def __init__(self,tagdef,subelements=None,attribs=None,text=None, \
+                 needclose=False):
+        
+        self.tagdef = tagdef
+        
+        if subelements == None:
+            self.subelements = []
+        else:
+            self.subelements = subelements
+        
+        if attribs == None:
+            self.attribs = {}
+        else:
+            self.attribs = attribs
+            
+        self.text = text
+        self.needclose = needclose
+
+    def __str__(self):
+        
+        attrib_str = ""
+        element_str = ""
+        for attrib in self.attribs:
+            attrib_str += ' %s="%s"' % (attrib, self.attribs[attrib])
+        element_str += "<%s%s>" % (self.tagdef,attrib_str)
+        if self.text:
+            element_str += self.text
+        if len(self.subelements) != 0:
+            element_str += '\n'
+            for element in self.subelements:
+                element_str += str(element)    
+        if self.needclose:
+            element_str += '</%s>' % self.tagdef
+        element_str += '\n'
+        return element_str
+
+            
+
 class HtmlElement(object):
     """
     an HtmlElement is used to create the base element of an HTML page. It is a
@@ -474,7 +526,7 @@ if __name__ == '__main__':
     t.rows.append(('i', 'j', 'k'))
 #    f.write(str(t) + '<p>\n')
     h.bodyelements.append(t)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))                      
     print(str(t))
     print('-'*79)
 
@@ -485,7 +537,7 @@ if __name__ == '__main__':
         col_width=('', '75%'))
 #    f.write(str(t2) + '<p>\n')
     h.bodyelements.append(t2)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))
     print(t2)
     print('-'*79)
 
@@ -494,7 +546,7 @@ if __name__ == '__main__':
     t2.rows.append(TableRow(['7', '8'], attribs={'align': 'center'}))
 #    f.write(str(t2) + '<p>\n')
     h.bodyelements.append(t2)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))
     print(t2)
     print('-'*79)
 
@@ -511,7 +563,7 @@ if __name__ == '__main__':
         col_styles=['font-size: large', '', 'font-size: small', 'background-color:yellow'])
 #    f.write(htmlcode + '<p>\n')
     h.bodyelements.append(htmlcode)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))
     print(htmlcode)
     print('-'*79)
 
@@ -528,21 +580,21 @@ if __name__ == '__main__':
     t = Table(rows=gen_table_squares(10), header_row=('x', 'square(x)'))
  #   f.write(str(t) + '<p>\n')
     h.bodyelements.append(t)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))
 
     print '-'*79
     l = List(['aaa', 'bbb', 'ccc'])
  #   f.write(str(l) + '<p>\n')
     h.bodyelements.append(l)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))
     l.ordered = True
 #    f.write(str(l) + '<p>\n')
     h.bodyelements.append(l)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))
     l.start=10
 #    f.write(str(l) + '<p>\n')
     h.bodyelements.append(l)
-    h.bodyelements.append('<p>\n')
+    h.bodyelements.append(BasicElement('p'))
 
     f.write(str(h))    
     f.close()
