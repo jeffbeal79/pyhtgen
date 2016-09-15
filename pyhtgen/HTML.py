@@ -415,7 +415,7 @@ class Table (object):
             if self.col_styles and not row.col_styles:
                 row.col_styles = self.col_styles
             result += str(row)
-        result += '</TABLE>'
+        result += '</TABLE>\n'
         return result
 
 
